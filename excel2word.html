@@ -1,0 +1,504 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="keywords" content="iconfont preview for web">
+  <meta name="description" content="iconfont preview for web, Momo's Blog, LuckyMomo">
+  <title>Convert Excel to Word</title>
+  <style>
+  /*全局设置*/
+  body::-webkit-scrollbar { display: none}
+  p {
+    margin: 0;
+  }
+  [v-cloak] {
+    display: none;
+  }
+  #app {
+    text-align: center;
+    padding: 10px 50px 80px;
+  }
+  .p-action {
+    margin: 20px auto;
+    max-width: 1100px;
+    width: 100%;
+    font-size: 35px;
+    text-align: center;
+    font-weight: bold;
+  }
+  .p-reset, .p-copy-type, .p-change-background, .p-export-vsfont {
+    position: absolute;
+    top: 38px;
+    right: 100px;
+    padding: 8px 20px;
+    font-size: 20px;
+    color: white;
+    cursor: pointer;
+    border-radius: 4px;
+    border: 1px solid #aaaaaa;
+    background-color: #3D8AC7;
+    opacity: 1;
+    transition: 0.3s all;
+  }
+  .p-reset:hover, .p-copy-type:hover, .p-change-background:hover, .p-export-vsfont:hover {
+    opacity: 0.9;
+  }
+  .p-copy-type {
+    left: 100px;
+    right: auto;
+  }
+  .p-change-background {
+    left: 260px;
+    right: auto;
+  }
+  .p-export-vsfont {
+    left: 400px;
+    right: auto;
+  }
+  .p-github, .p-other, .p-back2top {
+    position: fixed;
+    right: 50px;
+    bottom: 70px;
+    background-color: #eff3f6;
+    background-image: linear-gradient(-180deg, #fafbfc, #eff3f6 90%);
+    color: #24292e;
+    border: 1px solid rgba(27, 31, 35, .2);
+    border-radius: 3px;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 20px;
+    padding: 6px 12px;
+    z-index: 999;
+  }
+  .p-help {
+    position: fixed;
+    right: 50px;
+    top: 50px;
+    width: 30px;
+    height: 30px;
+    color: #666666;
+    z-index: 2;
+    line-height: 30px;
+    font-weight: bolder;
+    border-radius: 50%;
+    border: 1px solid rgba(27, 31, 35, .2);
+    cursor: pointer;
+    background-color: #eff3f6;
+    background-image: linear-gradient(-180deg, #fafbfc, #eff3f6 90%);
+  }
+  .p-github:hover, .p-other:hover, .p-help, .p-back2top: hover {
+    opacity: 0.9;
+  }
+  .p-other {
+    bottom: 30px;
+  }
+  .p-back2top {
+    bottom: 110px;
+  }
+  /*字体文件载入*/
+  .p-input-container {
+    display: flex;
+    padding-top: 50px;
+  }
+  .p-input-container .line {
+    vertical-align: top;
+    width: 5px;
+    height: 400px;
+    transform-origin: top;
+    background-repeat: repeat;
+    background-image: url(http://www.luckly-mjw.cn/baseSource/icon-dotted-y.png);
+  }
+  .p-input-container .url-box, .file-box {
+    height: 300px;
+    flex: 1;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+  }
+  .p-input-container .url-box input {
+    margin-bottom: 30px;
+    display: block;
+    width: 280px;
+    padding: 10px;
+    font-size: 24px;
+    border-radius: 4px;
+    box-shadow: none;
+    color: #444444;
+    border: 1px solid #cccccc;
+  }
+  .p-input-container .input-box, .url-box div {
+    position: relative;
+    display: inline-block;
+    height: 50px;
+    line-height: 50px;
+    padding: 10px 30px;
+    font-size: 30px;
+    color: white;
+    cursor: pointer;
+    border-radius: 4px;
+    border: 1px solid #aaaaaa;
+    background-color: #3D8AC7;
+    opacity: 1;
+    transition: 0.3s all;
+  }
+  .p-input-container .input-box:hover, .url-box div:hover {
+    opacity: 0.9;
+  }
+  .p-input-container .input-box input {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+  }
+  .p-input-container .url-box div {
+    width: 240px;
+  }
+  /*icon 列表样式*/
+  .p-icon-item {
+    margin: 6px;
+    padding: 10px 6px;
+    display: inline-block;
+    text-align: center;
+    border-radius: 4px;
+    cursor: pointer;
+    border: 1px solid #dddddd;
+    overflow: hidden;
+    box-sizing: border-box;
+    transition-duration: .4s;
+    transition-property: background, box-shadow;
+  }
+  .p-icon-item-background-0 {
+    background-image: url(http://upyun.luckly-mjw.cn/Assets/base-source/png-background.png);
+  }
+  .p-icon-item-background-1 {
+    background-color: #FCFCFC;
+  }
+  .p-icon-item-background-2 {
+    background-color: #EBEBEB;
+  }
+  .p-icon-item:hover {
+    background: #ffffff;
+    border-color: transparent;
+    box-shadow: 0 5px 18px 0 rgba(0, 0, 0, 0.3);
+  }
+  .p-icon-item:active {
+    color: white;
+    background: #7BD784;
+  }
+  .p-icon-item .iconfont {
+    margin: 0 20px;
+    padding: 6px;
+    border-radius: 4px;
+    font-size: 28px;
+  }
+  .p-icon-item .name {
+    font-size: 12px;
+    font-weight: bold;
+  }
+  .p-icon-item .value {
+    font-size: 12px;
+    font-weight: bold;
+  }
+  .p-icon-item svg {
+    width: 36px;
+    height: 36px;
+  }
+  .container{
+    display: flex;
+    justify-content: space-around;
+  }
+  .style-tools{
+    position: absolute;
+    width: 500px;
+  }
+  </style>
+</head>
+<body>
+<section id="app" v-cloak>
+  <!--顶部操作提示-->
+  <section class="p-action g-box">{{tips}}</section>
+  <!-- <div v-if="contentList.length > 0" class="p-copy-type" @click="copyType = copyType === 'value' ? 'name' : 'value'">复制 {{ copyType }}</div> -->
+  <!-- <div v-if="contentList.length > 0" class="p-change-background" @click="backgroundIndex = (backgroundIndex + 1) % 3">切换背景</div>
+  <div v-if="contentList.length > 0" class="p-export-vsfont" @click="downVsfont">导出vsfont</div> -->
+  <div v-if="contentList.length > 0" class="p-copy-type" @click="downloadAll">全部导出(ZIP)</div>
+  <!-- <div v-if="contentList.length > 0" class="p-change-background" @click="downloadSelected">导出选中</div> -->
+  <div v-if="contentList.length > 0" class="p-reset" @click="reload">重新载入</div>
+  <div v-if="loaded" class="p-notice"></div>
+  <a class="p-help" target="_blank" href="https://segmentfault.com/a/1190000020121850">?</a>
+  <a class="p-back2top" href="#">回到顶部</a>
+  <a class="p-github" target="_blank" href="https://github.com/Momo707577045/iconfont-preview">github</a>
+  <a class="p-other" target="_blank" href="http://blog.luckly-mjw.cn/tool-show/index.html">其他实用工具</a>
+  <!--excel 文件载入-->
+  <section class="p-input-container" v-if="contentList.length === 0">
+    <div class="file-box">
+      <div class="input-box">
+        <label>解析本地 xls 文件</label>
+        <input type="file" @change="getLocalXLS" accept="application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
+      </div>
+    </div>
+  </section>
+  <!--word 展示-->
+  <section v-else>
+    <div class="style-tools">
+      <!-- <div class="tool-item">
+        <label>表格对齐方式</label>
+        <a class="btn" @click="setStyle('wrapStyle', 'margin', '0 0 0 0')">左对齐</a>
+        <a class="btn" @click="setStyle('wrapStyle', 'margin', '0 auto')">居中</a>
+        <a class="btn" @click="setStyle('wrapStyle', 'margin', '0 0 0 118px')">右对齐</a>
+      </div> -->
+    </div>
+    <div class="container">
+      <div class="word-export" v-for="(item, index) in contentList" :style="style" :index="index">
+        <div>
+          <h3 class="title" style="outline: none; font-size: 18px; text-align: center;" contenteditable>{{fileName}}</h3>
+        </div>
+        <table :style="wrapStyle">
+          <tbody class="content" :style="contentStyle">
+            <tr v-for="items in item" class="content-item" :style="itemStyle">
+                <template v-for="itemss in items">
+                  <td class="name" :style="pStyle" style="background-color: #ccc;" contenteditable>{{itemss.name}}</td>
+                  <td class="value" :style="pStyle" contenteditable>{{itemss.value}}</td>
+                </template>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+</section>
+</body>
+<script>
+var _hmt = _hmt || [];
+(function () {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?1f12b0865d866ae1b93514870d93ce89";
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+<!--vue 前端框架-->
+<script src="https://cdn.bootcss.com/vue/2.6.10/vue.min.js"></script>
+<script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.13.1/xlsx.full.min.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/jszip/3.5.0/jszip.min.js"></script>
+<script src='https://cdn.jsdelivr.net/npm/html-docx-js@0.3.1/dist/html-docx.js'></script>
+<script src="https://cdn.bootcss.com/FileSaver.js/2014-11-29/FileSaver.js"></script>
+<script>
+new Vue({
+  el: '#app',
+
+  data() {
+    return {
+      tips: '请选择表格文件源', // 顶部提示
+      fileName: 'excel-to-word',
+      loaded: 0,
+      contentList: [],
+      style: {
+        'width': '794px',
+        'height': '1123px',
+        // 'margin': '20px auto',
+        'border': '1px solid',
+        'box-sizing': 'border-box',
+        'padding': '71px 89px',
+        'overflow': 'auto',
+        'box-shadow': '0 4px 5px rgba(75, 75, 75, 0.2)'
+      },
+      wrapStyle: {
+        'margin': '0 0 0 0'
+      },
+      contentStyle: {},
+      itemStyle: {
+        'width': '216px',
+        'height': '24px',
+        'border-bottom': '2px solid #FFF',
+      },
+      pStyle: {
+        'width': '80px',
+        'white-space': 'nowrap',
+        'line-height': '18px',
+        'text-align': 'center',
+        'display': 'inline-block',
+        'font-family': 'Ya Hei',
+        'font-size': '12px',
+        'outline': 'none',
+        'white-space': 'normal'
+      }
+    }
+  },
+
+  methods: {
+    // 解析本地 xls 文件
+    getLocalXLS(event) {
+      // 解析文件内容
+      let file = event.target.files[0];
+      this.fileName = file.name.split('.')[0];
+
+      let reader = new FileReader();
+      reader.onload = (evt) => {
+        let data = evt.target.result;
+        let workbook = XLSX.read(data, {type: 'binary'});
+
+        let sheet_data = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]);
+
+        this.parseSheetData(sheet_data);
+
+      };
+      reader.readAsBinaryString(file);
+    },
+
+    parseSheetData(data) {
+      data.forEach((item, index) => {
+        let contentList = [];
+        let row = [];
+        let counter = 1;
+        let num = 3; //每行的数据对个数
+        let total = Object.keys(item).length;
+        for(let key in item){
+          row.push({
+            name: key,
+            value: item[key]
+          });
+          counter++;
+          let len = row.length;
+          if(len === num){
+            contentList.push(row);
+            row = [];
+          }
+          if(total === counter){
+            contentList.push(row);
+          }
+        }
+        this.contentList.push(contentList);
+      });
+
+      this.tips = `${this.fileName}表格解析结果`;
+    },
+
+    downloadAll() {
+      let fileName = $('.title').html() || this.fileName;
+      let contentNode = $('.word-export');
+      let contentHTML = [];
+      let _this = this;
+      contentNode.each((index,item) => {
+        let html = _this.exportWord(item);
+        contentHTML.push(html);
+      });
+      this.downLoadZip(contentHTML, fileName);
+    },
+
+    downloadSelected() {
+
+    },
+
+    exportWord(contentNode) {
+      var static = {
+        mhtml: {
+          // top: "Mime-Version: 1.0\nContent-Base: " + location.href + "\nContent-Type: Multipart/related; boundary=\"NEXT.ITEM-BOUNDARY\";type=\"text/html\"\n\n--NEXT.ITEM-BOUNDARY\nContent-Type: text/html; charset=\"utf-8\"\nContent-Location: " + location.href + "\n\n<!DOCTYPE html>\n<html>\n_html_</html>",
+          top: "<!DOCTYPE html>\n<html>\n_html_</html>",
+          head: "<head>\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">\n<style>\n_styles_\n</style>\n</head>\n",
+          body: "<body>_body_</body>"
+        }
+      };
+      var options = {
+        maxWidth: 624
+      };
+      // Clone selected element before manipulating it
+      var markup = $(contentNode).clone();
+      // Remove hidden elements from the output
+      markup.each(function() {
+        var self = $(contentNode);
+        if (self.is(':hidden'))
+          self.remove();
+      });
+
+      // Embed all images using Data URLs
+      var images = Array();
+      var img = markup.find('img');
+      for (var i = 0; i < img.length; i++) {
+        // Calculate dimensions of output image
+        var w = Math.min(img[i].width, options.maxWidth);
+        var h = img[i].height * (w / img[i].width);
+        // Create canvas for converting image to data URL
+        var canvas = document.createElement("CANVAS");
+        canvas.width = w;
+        canvas.height = h;
+        // Draw image to canvas
+        var context = canvas.getContext('2d');
+        context.drawImage(img[i], 0, 0, w, h);
+        // Get data URL encoding of image
+        var uri = canvas.toDataURL("image/png");
+        $(img[i]).attr("src", img[i].src);
+        img[i].width = w;
+        img[i].height = h;
+        // Save encoded image to array
+        images[i] = {
+          type: uri.substring(uri.indexOf(":") + 1, uri.indexOf(";")),
+          encoding: uri.substring(uri.indexOf(";") + 1, uri.indexOf(",")),
+          location: $(img[i]).attr("src"),
+          data: uri.substring(uri.indexOf(",") + 1)
+        };
+      }
+
+      // Prepare bottom of mhtml file with image data
+      var mhtmlBottom = "\n";
+      for (var i = 0; i < images.length; i++) {
+        mhtmlBottom += "--NEXT.ITEM-BOUNDARY\n";
+        mhtmlBottom += "Content-Location: " + images[i].location + "\n";
+        mhtmlBottom += "Content-Type: " + images[i].type + "\n";
+        mhtmlBottom += "Content-Transfer-Encoding: " + images[i].encoding + "\n\n";
+        mhtmlBottom += images[i].data + "\n\n";
+      }
+      mhtmlBottom += "--NEXT.ITEM-BOUNDARY--";
+
+      //TODO: load css from included stylesheet
+      var styles = "";
+
+      // Aggregate parts of the file together
+      var fileContent = static.mhtml.top.replace("_html_", static.mhtml.head.replace("_styles_", styles) + static.mhtml.body.replace("_body_", markup.html())) + mhtmlBottom;
+
+      return fileContent
+    },
+
+    downLoadZip(contentHTML, fileName) {
+      const zip = new JSZip();
+      let contentList = this.contentList;
+      contentHTML.forEach((item, index) => {
+        let uid = contentList[index][0][0]['value'];
+        console.log(contentList);
+        let converted = htmlDocx.asBlob(item);
+        zip.file(`${uid}-${fileName}.docx`, converted, {type: 'blob'});
+      });
+
+      zip.generateAsync({type: 'blob'}).then(content => {
+        saveAs(content, `${fileName}.zip`);
+      });
+    },
+
+    downLoad(contentHTML, fileName) {
+      const converted = htmlDocx.asBlob(contentHTML).then(converted => {
+        saveAs(converted, `${fileName}.docx`);
+      });
+    },
+
+    // 页面重新加载
+    reload() {
+      location.reload();
+    },
+
+    setStyle(selector, key, value) {
+      this[selector][key] = value;
+    }
+  }
+})
+</script>
+</html>
+
